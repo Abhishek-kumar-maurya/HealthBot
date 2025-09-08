@@ -1,0 +1,9 @@
+﻿fastapi
+uvicorn
+transformers
+sentence-transformers
+langchain
+qdrant-client
+pinecone-client
+redis
+python-dotenv
