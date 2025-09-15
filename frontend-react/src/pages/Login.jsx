@@ -26,6 +26,8 @@ const Login = () => {
     
     try {
       await login(formData);
+      // Add a small delay to ensure token is properly set before navigation
+      await new Promise(resolve => setTimeout(resolve, 100));
       navigate('/dashboard');
     } catch (error) {
       // Error is handled by AuthContext

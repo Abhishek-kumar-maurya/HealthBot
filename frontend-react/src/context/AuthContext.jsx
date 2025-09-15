@@ -100,15 +100,24 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.login(credentials);
       
-      // Store token and user data
-      localStorage.setItem('authToken', response.token || response.access_token);
+      const token = response.token || response.access_token;
+      if (!token) {
+        throw new Error('No token received from server');
+      }
+      
+      // Store token and user data synchronously
+      localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(response.user));
+      
+      // Ensure the token is available for subsequent requests
+      // by forcing a small delay for localStorage to be committed
+      await new Promise(resolve => setTimeout(resolve, 10));
       
       dispatch({
         type: 'AUTH_SUCCESS',
         payload: {
           user: response.user,
-          token: response.token || response.access_token
+          token: token
         }
       });
       
@@ -116,6 +125,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       const errorMessage = error.response?.data?.message || 
                           error.response?.data?.detail || 
+                          error.response?.data?.error ||
                           'Login failed';
       dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
       throw error;
