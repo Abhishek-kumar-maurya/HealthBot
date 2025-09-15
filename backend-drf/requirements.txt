@@ -7,3 +7,4 @@ redis
 gunicorn
 uvicorn
 django-environ
+dj-database-url
